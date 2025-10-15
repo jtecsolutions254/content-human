@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Transform AI-generated content into natural, human-like writing. Bypass AI detection tools with our advanced humanizing technology.">
+  <title>ContentHuman - Humanize Your AI Content Instantly</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <style id="app-style">
+    body {
+      font-family: 'Inter', sans-serif;
+      --tw-bg-opacity: 1;
+      background-color: rgb(250 250 252 / var(--tw-bg-opacity));
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
+    }
+    
+    .editor-container {
+      height: 400px;
+      margin-bottom: 20px;
+    }
+    
+    .ql-toolbar.ql-snow,
+    .ql-container.ql-snow {
+      border-color: #e2e8f0;
+    }
+    
+    .ql-toolbar.ql-snow {
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+      border-bottom: none;
+    }
+    
+    .ql-container.ql-snow {
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      height: calc(100% - 42px);
+    }
+    
+    .metric-card {
+      transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    #reportPanel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    
+    #reportPanel.expanded {
+      max-height: 1000px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="relative px-4 py-4 flex justify-between items-center bg-white shadow-sm">
+    <a class="text-2xl font-bold leading-none flex items-center" href="javascript:void(0)">
+      <span >CONTENT HUMANIZER PRO</span>
+    </a>
+    <div class="lg:hidden">
+      <button class="navbar-burger flex items-center p-3 text-blue-600" id="mobile-menu-button">
+        <svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+        </svg>
+      </button>
+    </div>
+    <ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-8" id="desktop-nav">
+      <li><a class="text-sm text-gray-600 hover:text-gray-900 nav-link" href="javascript:void(0)">Home</a></li>
+      <li><a class="text-sm text-gray-600 hover:text-gray-900 nav-link" href="javascript:void(0)" id="about-link">About</a></li>
+      <li><a class="text-sm text-gray-600 hover:text-gray-900 nav-link" href="javascript:void(0)" id="faq-link">FAQ</a></li>
+      <li><a class="text-sm text-gray-600 hover:text-gray-900 nav-link" href="javascript:void(0)" id="contact-link">Contact</a></li>
+    </ul>
+    <div class="hidden lg:flex">
+      <a class="px-4 py-2 text-sm text-blue-600 font-semibold rounded hover:text-blue-700" href="javascript:void(0)" id="login-button">Log In</a>
+      <a class="ml-3 px-4 py-2 text-sm text-white font-semibold rounded gradient-bg hover:opacity-90" href="javascript:void(0)" id="signup-button">Sign Up</a>
+    </div>
+  </nav>
+  
+  <!-- Mobile Nav Menu -->
+  <div class="lg:hidden hidden bg-white w-full absolute z-20 left-0 shadow-xl px-6 py-4" id="mobile-menu">
+    <ul class="space-y-3">
+      <li><a class="block text-sm text-gray-600 hover:text-gray-900" href="javascript:void(0)">Home</a></li>
+      <li><a class="block text-sm text-gray-600 hover:text-gray-900" href="javascript:void(0)" id="mobile-about-link">About</a></li>
+      <li><a class="block text-sm text-gray-600 hover:text-gray-900" href="javascript:void(0)" id="mobile-faq-link">FAQ</a></li>
+      <li><a class="block text-sm text-gray-600 hover:text-gray-900" href="javascript:void(0)" id="mobile-contact-link">Contact</a></li>
+      <li class="pt-2"><a class="block px-4 py-2 text-sm text-center text-blue-600 font-semibold rounded border border-blue-600" href="javascript:void(0)" id="mobile-login-button">Log In</a></li>
+      <li><a class="block px-4 py-2 text-sm text-center text-white font-semibold rounded gradient-bg" href="javascript:void(0)" id="mobile-signup-button">Sign Up</a></li>
+    </ul>
+  </div>
+
+  <div id="app-container">
+    <!-- Homepage Content -->
+    <div id="homepage" class="min-h-screen">
+      <!-- Hero Section -->
+      <div class="relative py-16 md:py-24 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="lg:flex lg:items-center lg:space-x-12">
+            <div class="lg:w-1/2">
+              <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+                <span>Humanize Your </span>
+                <span>AI Content</span>
+                <span> Instantly</span>
+              </h1>
+              <p class="mt-4 text-xl text-gray-600">Transform machine-generated text into natural, human-like writing that bypasses AI detection tools.</p>
+              <div class="mt-8">
+                <a href="javascript:void(0)" id="try-now-button" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white gradient-bg hover:opacity-90 transition-opacity">
+                  Try Now
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+                <a href="javascript:void(0)" id="learn-more-button" class="ml-4 inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Learn More
+                </a>
+              </div>
+            </div>
+            <div class="mt-12 lg:mt-0 lg:w-1/2">
+              <img src="https://www.oyolloo.com/wp-content/uploads/2025/01/How-To-Humanize-AI-Content.jpg" alt="AI Content Humanizing" class="w-full h-auto rounded-lg shadow-xl">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+          <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Why Choose ContentHumanizer PRO?
+            </h2>
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              Our advanced AI technology ensures your content remains undetectable while maintaining its original meaning.
+            </p>
+          </div>
+          
+          <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Feature 1 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Bypass AI Detection</h3>
+              <p class="mt-2 text-gray-600">Our advanced algorithms ensure your content passes through AI detection tools unnoticed.</p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Lightning Fast</h3>
+              <p class="mt-2 text-gray-600">Instantly transform your content with our high-speed processing technology.</p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Multiple Writing Styles</h3>
+              <p class="mt-2 text-gray-600">Choose from various writing styles including Academic, Professional, Creative, and Casual.</p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Detailed Reports</h3>
+              <p class="mt-2 text-gray-600">Get comprehensive reports on originality, readability, and more to perfect your content.</p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Grammar & Style Check</h3>
+              <p class="mt-2 text-gray-600">Receive suggestions to enhance readability and correct grammatical errors in your content.</p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bg-white rounded-xl shadow-md p-6 transition duration-300 feature-card">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                </svg>
+              </div>
+              <h3 class="mt-5 text-lg font-medium text-gray-900">Save & Export</h3>
+              <p class="mt-2 text-gray-600">Save your humanized content in your dashboard or export it in various formats.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonials -->
+        <div class="bg-white py-16 md:py-24">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+              <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Trusted by Content Creators Worldwide
+              </h2>
+              <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+                See what our users are saying about ContentHuman.
+              </p>
+            </div>
+            
+            <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <!-- Testimonial 1 -->
+              <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <img class="h-12 w-12 rounded-full" src="https://cdn.pixabay.com/photo/2016/08/20/05/36/avatar-1606914_1280.png" alt="Avatar">
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">Sarah Johnson</h4>
+                    <p class="text-gray-500">Content Marketer</p>
+                  </div>
+                </div>
+                <p class="text-gray-600 italic">"ContentHumanizer PRO has transformed my workflow. I can now create AI content and humanize it within minutes, saving me hours of manual rewriting."</p>
+                <div class="mt-4 flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+              
+              <!-- Testimonial 2 -->
+              <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <img class="h-12 w-12 rounded-full" src="https://cdn.pixabay.com/photo/2018/08/28/12/41/avatar-3637425_1280.png" alt="Avatar">
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">Michael Chen</h4>
+                    <p class="text-gray-500">Academic Writer</p>
+                  </div>
+                </div>
+                <p class="text-gray-600 italic">"As a researcher, I need my AI-drafted content to pass all academic integrity checks. ContentHumanizer PRO delivers every time with exceptional quality."</p>
+                <div class="mt-4 flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                </div>
+              </div>
+              
+              <!-- Testimonial 3 -->
+              <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <img class="h-12 w-12 rounded-full" src="https://cdn.pixabay.com/photo/2016/08/20/05/38/avatar-1606916_1280.png" alt="Avatar">
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">Olivia Martinez</h4>
+                    <p class="text-gray-500">SEO Specialist</p>
+                  </div>
+                </div>
+                <p class="text-gray-600 italic">"The variety of writing styles and detailed content reports have been game-changers for my SEO content strategy. Highly recommended!"</p>
+                <div class="mt-4 flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="gradient-bg py-16 md:py-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+              <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                Ready to Humanize Your Content?
+              </h2>
+              <p class="mt-4 max-w-2xl text-xl text-blue-100 mx-auto">
+                Join thousands of content creators who trust ContentHuman for undetectable AI content.
+              </p>
+              <div class="mt-8 flex justify-center">
+                <a href="javascript:void(0)" id="cta-try-now" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-700 bg-white hover:bg-blue-50">
+                  Try Now - It's Free
+                </a>
+                <a href="javascript:void(0)" class="ml-4 inline-flex items-center px-6 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-blue-600 hover:border-blue-600">
+                  View Pricing
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <footer class="bg-gray-900 text-gray-300">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-4">ContentHumanizer PRO</h3>
+              <ul class="space-y-2">
+                <li><a href="javascript:void(0)" class="hover:text-white">Home</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">About Us</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Pricing</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-4">Features</h3>
+              <ul class="space-y-2">
+                <li><a href="javascript:void(0)" class="hover:text-white">Content HumanizerPRO</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">AI Detection Bypass</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Content Reports</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Grammar Check</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-4">Resources</h3>
+              <ul class="space-y-2">
+                <li><a href="javascript:void(0)" class="hover:text-white">Blog</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Help Center</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">FAQs</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Tutorials</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-4">Legal</h3>
+              <ul class="space-y-2">
+                <li><a href="javascript:void(0)" class="hover:text-white">Privacy Policy</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Terms of Service</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">Cookie Policy</a></li>
+                <li><a href="javascript:void(0)" class="hover:text-white">GDPR</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
+            <p>© 2025 ContentHuman. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+              <a href="javascript:void(0)" class="text-gray-400 hover:text-white">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="javascript:void(0)" class="text-gray-400 hover:text-white">
+                <i class="fab fa-facebook"></i>
+              </a>
+              <a href="javascript:void(0)" class="text-gray-400 hover:text-white">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="javascript:void(0)" class="text-gray-400 hover:text-white">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <!-- About Page -->
+    <div id="about-page" class="min-h-screen py-16 px-4 bg-gray-50 hidden">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 gradient-text">About ContentHuman</h1>
+        <div class="bg-white rounded-xl shadow p-8">
+          <h2 class="text-2xl font-semibold mb-4">Our Mission</h2>
+          <p class="text-gray-700 mb-6">
+            At ContentHuman, we're dedicated to bridging the gap between AI efficiency and human creativity. Our mission is to empower content creators, writers, and businesses to leverage the speed and capabilities of AI while ensuring their content remains authentically human.
+          </p>
+          
+          <h2 class="text-2xl font-semibold mb-4">Our Story</h2>
+          <p class="text-gray-700 mb-6">
+            Founded in 2025 by JOSEPH MUSYOKA and a team of AI researchers and content professionals, ContentHuman was born from a simple observation: as AI writing tools became more prevalent, so did the tools designed to detect them. We saw content creators caught in the middle, unable to benefit from AI's efficiency without being penalized.
+          </p>
+          <p class="text-gray-700 mb-6">
+            Our team developed a revolutionary approach to content transformation that preserves meaning while introducing the natural variations and imperfections that characterize human writing. The result is ContentHuman – the leading platform for humanizing AI-generated content.
+          </p>
+          
+          <h2 class="text-2xl font-semibold mb-4">Our Technology</h2>
+          <p class="text-gray-700 mb-6">
+            ContentHuman uses advanced natural language processing and machine learning techniques to analyze and transform text. Unlike simple paraphrasing tools, our technology understands context, recognizes AI patterns, and introduces human-like variations while maintaining the original meaning and quality of your content.
+          </p>
+          
+          <h2 class="text-2xl font-semibold mb-4">Our Values</h2>
+          <ul class="list-disc pl-6 text-gray-700 mb-6 space-y-2">
+            <li><strong>Innovation:</strong> We continuously improve our technology to stay ahead of AI detection tools.</li>
+            <li><strong>Quality:</strong> We prioritize maintaining the meaning and readability of your content through the transformation process.</li>
+            <li><strong>Accessibility:</strong> We believe in making powerful AI tools accessible to everyone, from students to enterprise businesses.</li>
+            <li><strong>Privacy:</strong> We respect user privacy and do not store content after processing.</li>
+            <li><strong>Ethical Use:</strong> We promote the responsible use of AI writing and humanization tools.</li>
+          </ul>
+          
+          <h2 class="text-2xl font-semibold mb-4">Our Team</h2>
+          <p class="text-gray-700">
+            ContentHuman is powered by a diverse team of AI researchers, linguists, content strategists, and software engineers committed to creating the most effective AI humanization tool on the market. Together, we're redefining what's possible at the intersection of artificial and human intelligence.
+          </p>
+        </div>
+        <div class="text-center mt-8">
+          <button id="back-to-home-from-about" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- FAQ Page -->
+    <div id="faq-page" class="min-h-screen py-16 px-4 bg-gray-50 hidden">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 gradient-text">Frequently Asked Questions</h1>
+        <div class="bg-white rounded-xl shadow p-8">
+          <div class="space-y-6">
+            <!-- FAQ Item 1 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">What is ContentHuman?</h3>
+              <p class="mt-2 text-gray-600">ContentHuman is an advanced AI-powered tool that transforms AI-generated content into natural, human-like writing that can bypass AI detection tools while preserving the original meaning.</p>
+            </div>
+            
+            <!-- FAQ Item 2 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">How does ContentHuman work?</h3>
+              <p class="mt-2 text-gray-600">Our technology analyzes your content for patterns typically found in AI-generated text. It then applies sophisticated algorithms to transform the writing style, sentence structure, and word choice to match human writing patterns, all while maintaining the original meaning and information.</p>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Can AI detection tools identify content processed by ContentHuman?</h3>
+              <p class="mt-2 text-gray-600">ContentHuman is specifically designed to make AI-generated content undetectable by current AI detection tools. While we can't guarantee 100% undetectability as these tools evolve, our technology is regularly updated to stay ahead of detection methods.</p>
+            </div>
+            
+            <!-- FAQ Item 4 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">What writing styles does ContentHuman offer?</h3>
+              <p class="mt-2 text-gray-600">ContentHuman offers multiple writing styles including Academic, Professional, Creative, and Casual. Each style has distinct characteristics tailored to different content needs.</p>
+            </div>
+            
+            <!-- FAQ Item 5 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Is there a limit to how much content I can humanize?</h3>
+              <p class="mt-2 text-gray-600">Free accounts have a monthly limit, while paid subscriptions offer higher or unlimited usage depending on the plan. Check our pricing page for specific details on each plan's limits.</p>
+            </div>
+            
+            <!-- FAQ Item 6 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Does ContentHuman store my content?</h3>
+              <p class="mt-2 text-gray-600">We prioritize your privacy. Your content is processed in real-time and is not permanently stored on our servers. Registered users can save their own content in their dashboard if they choose to do so.</p>
+            </div>
+            
+            <!-- FAQ Item 7 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">How accurate are the content reports?</h3>
+              <p class="mt-2 text-gray-600">Our content reports use industry-standard metrics for readability, grammar, and style analysis. The AI detection likelihood score is based on our proprietary algorithm that simulates popular AI detection tools.</p>
+            </div>
+            
+            <!-- FAQ Item 8 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Can I use ContentHuman for academic papers?</h3>
+              <p class="mt-2 text-gray-600">While ContentHuman can help refine and humanize content, we encourage users to follow their institution's guidelines regarding AI usage in academic work. Always check your school or publisher's policies.</p>
+            </div>
+            
+            <!-- FAQ Item 9 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Do you offer refunds?</h3>
+              <p class="mt-2 text-gray-600">Yes, we offer a 7-day money-back guarantee on all new subscriptions if you're not satisfied with our service.</p>
+            </div>
+            
+            <!-- FAQ Item 10 -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">How do I get help if I have issues?</h3>
+              <p class="mt-2 text-gray-600">You can reach our support team through the Contact page or by emailing support@contenthuman.com. Premium subscribers also have access to priority support.</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-8">
+          <button id="back-to-home-from-faq" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Contact Page -->
+    <div id="contact-page" class="min-h-screen py-16 px-4 bg-gray-50 hidden">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 gradient-text">Contact Us</h1>
+        <div class="bg-white rounded-xl shadow p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h2 class="text-2xl font-semibold mb-4">Get in Touch</h2>
+              <p class="text-gray-600 mb-6">
+                Have questions about ContentHuman? We're here to help. Fill out the form and our team will get back to you as soon as possible.
+              </p>
+              
+              <div class="space-y-4 mb-6">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 text-blue-600">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="ml-3 text-gray-600">
+                    <p>supportcontenthuman@gmail.com</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 text-blue-600">
+                    <i class="fas fa-phone"></i>
+                  </div>
+                  <div class="ml-3 text-gray-600">
+                    <p>+1 (555) 123-4567</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 text-blue-600">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  <div class="ml-3 text-gray-600">
+                    <p>1234 Innovation Drive<br>San Francisco, CA 94103</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex space-x-4">
+                <a href="javascript:void(0)" class="text-blue-600 hover:text-blue-800">
+                  <i class="fab fa-twitter fa-2x"></i>
+                </a>
+                <a href="javascript:void(0)" class="text-blue-600 hover:text-blue-800">
+                  <i class="fab fa-facebook fa-2x"></i>
+                </a>
+                <a href="javascript:void(0)" class="text-blue-600 hover:text-blue-800">
+                  <i class="fab fa-linkedin fa-2x"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <form id="contact-form">
+                <div class="mb-4">
+                  <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-4">
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-4">
+                  <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                  <input type="text" id="subject" name="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-6">
+                  <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                  <textarea id="message" name="message" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <button type="submit" class="w-full px-6 py-3 text-white font-medium rounded-md gradient-bg hover:opacity-90">
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-8">
+          <button id="back-to-home-from-contact" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="w-full">
+                <!-- Auth Tabs -->
+                <div class="border-b border-gray-200">
+                  <nav class="flex -mb-px" aria-label="Tabs">
+                    <button id="login-tab" class="w-1/2 py-4 px-1 text-center border-b-2 border-blue-500 font-medium text-sm text-blue-600">
+                      Log In
+                    </button>
+                    <button id="signup-tab" class="w-1/2 py-4 px-1 text-center border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                      Sign Up
+                    </button>
+                  </nav>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="login-form" class="mt-6">
+                  <form>
+                    <div class="mb-4">
+                      <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <input type="email" id="login-email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="mb-4">
+                      <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                      <input type="password" id="login-password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                      <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                          Remember me
+                        </label>
+                      </div>
+                      
+                      <div class="text-sm">
+                       <a id="forgot-password-link" href="javascript:void(0)" class="font-medium text-blue-600 hover:text-blue-500">
+  Forgot password?
+</a>
+
+                       
+
+                      </div>
+                    </div>
+                    
+                    <button type="button" id="login-submit" class="w-full px-4 py-2 gradient-bg text-white font-medium rounded-md hover:opacity-90">
+                      Log In
+                    </button>
+                  </form>
+
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                      <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-google mr-2"></i> Google
+                      </button>
+                      <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-github mr-2"></i> GitHub
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Signup Form -->
+                <div id="signup-form" class="mt-6 hidden">
+                  <form>
+                    <div class="mb-4">
+                      <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <input type="text" id="signup-name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="mb-4">
+                      <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <input type="email" id="signup-email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="mb-4">
+                      <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                      <input type="password" id="signup-password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="mb-6">
+                      <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                      <input type="password" id="signup-confirm-password" name="confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <button type="button" id="signup-submit" class="w-full px-4 py-2 gradient-bg text-white font-medium rounded-md hover:opacity-90">
+                      Sign Up
+                    </button>
+                  </form>
+                  
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                      <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-google mr-2"></i> Google
+                      </button>
+                      <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-github mr-2"></i> GitHub
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" id="close-auth-modal" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Forgot Password Modal -->
+<div id="forgotModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    </div>
+
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+      <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="w-full">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Forgot Password</h2>
+            <p class="text-sm text-gray-500 mb-4 text-center">Enter your email to receive a password reset link.</p>
+            <input type="email" id="forgot-email" placeholder="Enter your email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" required />
+            <button id="forgot-submit"
+              class="w-full px-4 py-2 gradient-bg text-white font-medium rounded-md hover:opacity-90">
+              Send Reset Link
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button type="button" id="close-forgot-modal"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div id="resetModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    </div>
+
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+      <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="w-full">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Reset Password</h2>
+            <p class="text-sm text-gray-500 mb-4 text-center">Paste your reset token and set a new password.</p>
+            <input type="text" id="reset-token" placeholder="Enter reset token"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3" required />
+            <input type="password" id="reset-password" placeholder="New Password"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" required />
+            <button id="reset-submit"
+              class="w-full px-4 py-2 gradient-bg text-white font-medium rounded-md hover:opacity-90">
+              Reset Password
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button type="button" id="close-reset-modal"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Humanizer Tool Interface -->
+    <div id="tool-interface" class="min-h-screen bg-gray-50 hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+          <div>
+            <h1 class="text-3xl font-bold gradient-text">Content Humanizer</h1>
+            <p class="text-gray-600">Transform AI-generated content into natural human writing</p>
+          </div>
+          <div class="flex items-center mt-4 lg:mt-0">
+            <button id="save-document" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 mr-3">
+              <i class="far fa-save mr-1"></i> Save
+            </button>
+            <button id="go-to-dashboard" class="px-4 py-2 text-white gradient-bg rounded-md hover:opacity-90">
+              <i class="fas fa-th-large mr-1"></i> Dashboard
+            </button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Input Editor -->
+          <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Input</h2>
+              <div class="mt-2 md:mt-0 flex items-center">
+                <label for="style-select" class="block text-sm font-medium text-gray-700 mr-2">Style:</label>
+                <select id="style-select" class="rounded-md border-gray-300 py-2 pl-3 pr-8 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                  <option value="academic">Academic</option>
+                  <option value="professional" selected>Professional</option>
+                  <option value="creative">Creative</option>
+                  <option value="casual">Casual</option>
+                </select>
+              </div>
+            </div>
+            <div id="editor-container-input" class="editor-container"></div>
+            <div class="flex justify-between mt-4">
+              <button id="clear-input" class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900">
+                <i class="fas fa-trash-alt mr-1"></i> Clear
+              </button>
+              <button id="humanize-button" class="px-6 py-2 text-white gradient-bg rounded-md hover:opacity-90">
+                <i class="fas fa-magic mr-1"></i> Humanize
+              </button>
+            </div>
+          </div>
+          
+          <!-- Output Editor -->
+          <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Output</h2>
+              <div class="flex items-center">
+                <button id="copy-output" class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 mr-2">
+                  <i class="far fa-copy mr-1"></i> Copy
+                </button>
+                <button id="download-output" class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800">
+                  <i class="fas fa-download mr-1"></i> Download
+                </button>
+              </div>
+            </div>
+            <div id="editor-container-output" class="editor-container"></div>
+            <div class="mt-4 text-sm text-gray-500 flex justify-end">
+              <span id="word-count">0 words</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Content Report Panel -->
+        <div class="mt-8 bg-white rounded-xl shadow">
+          <div id="report-toggle" class="p-4 flex justify-between items-center cursor-pointer">
+            <h3 class="text-lg font-semibold text-gray-800">Content Report</h3>
+            <i id="report-toggle-icon" class="fas fa-chevron-down text-gray-600"></i>
+          </div>
+          
+          <div id="reportPanel" class="px-6 pb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <!-- Originality Metric -->
+              <div class="bg-gray-50 p-4 rounded-lg metric-card">
+                <h4 class="text-sm font-medium text-gray-500">Originality</h4>
+                <div class="mt-2 flex items-end">
+                  <span id="originality-score" class="text-2xl font-semibold text-blue-600">98%</span>
+                  <span class="ml-1 text-sm text-gray-500">unique</span>
+                </div>
+                <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div id="originality-bar" class="bg-blue-600 h-2 rounded-full" style="width: 98%"></div>
+                </div>
+              </div>
+              
+              <!-- AI Detection Metric -->
+              <div class="bg-gray-50 p-4 rounded-lg metric-card">
+                <h4 class="text-sm font-medium text-gray-500">AI Detection</h4>
+                <div class="mt-2 flex items-end">
+                  <span id="human-score" class="text-2xl font-semibold text-green-600">94%</span>
+                  <span class="ml-1 text-sm text-gray-500">human</span>
+                </div>
+                <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div id="human-bar" class="bg-green-600 h-2 rounded-full" style="width: 94%"></div>
+                </div>
+              </div>
+              
+              <!-- Readability Metric -->
+              <div class="bg-gray-50 p-4 rounded-lg metric-card">
+                <h4 class="text-sm font-medium text-gray-500">Readability</h4>
+                <div class="mt-2 flex items-end">
+                  <span id="readability-score" class="text-2xl font-semibold text-purple-600">72</span>
+                  <span class="ml-1 text-sm text-gray-500">Flesch</span>
+                </div>
+                <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div id="readability-bar" class="bg-purple-600 h-2 rounded-full" style="width: 72%"></div>
+                </div>
+              </div>
+              
+              <!-- Word Count Metric -->
+              <div class="bg-gray-50 p-4 rounded-lg metric-card">
+                <h4 class="text-sm font-medium text-gray-500">Word Count</h4>
+                <div class="mt-2 flex items-end">
+                  <span id="detailed-word-count" class="text-2xl font-semibold text-gray-800">0</span>
+                  <span class="ml-1 text-sm text-gray-500">words</span>
+                </div>
+                <div class="mt-2 flex justify-between text-xs text-gray-500">
+                  <span>Reading time: <span id="reading-time">0 min</span></span>
+                  <span>Characters: <span id="character-count">0</span></span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Grammar & Style Suggestions -->
+            <div class="mt-6">
+              <h4 class="text-md font-medium text-gray-800 mb-3">Grammar & Style Suggestions</h4>
+              <div id="suggestions-container" class="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto">
+                <ul class="space-y-2 text-sm">
+                  <li class="text-gray-500">No suggestions available yet. Humanize your content to see recommendations.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- User Dashboard -->
+    <div id="dashboard" class="min-h-screen bg-gray-50 hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+          <div>
+            <h1 class="text-3xl font-bold gradient-text">Your Dashboard</h1>
+            <p class="text-gray-600">Manage your humanized content and usage statistics</p>
+          </div>
+          <div class="flex items-center mt-4 lg:mt-0">
+            <button id="new-document" class="px-4 py-2 text-white gradient-bg rounded-md hover:opacity-90">
+              <i class="fas fa-plus mr-1"></i> New Document
+            </button>
+            <button id="logout-button" class="ml-3 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100">
+              <i class="fas fa-sign-out-alt mr-1"></i> Log Out
+            </button>
+          </div>
+        </div>
+        
+        <!-- Usage Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <i class="fas fa-file-alt text-white text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Documents Processed</h2>
+                <p id="documents-count" class="text-2xl font-semibold text-gray-900">3</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <i class="fas fa-keyboard text-white text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Total Words Processed</h2>
+                <p id="words-count" class="text-2xl font-semibold text-gray-900">2,547</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center">
+              <div class="h-12 w-12 rounded-md flex items-center justify-center gradient-bg">
+                <i class="fas fa-crown text-white text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Current Plan</h2>
+                <p id="current-plan" class="text-2xl font-semibold text-gray-900">Free</p>
+                <p class="text-sm text-gray-500">5,000 words/month</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Saved Documents -->
+        <div class="bg-white rounded-xl shadow">
+          <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-800">Saved Documents</h2>
+            <div class="relative">
+              <input type="text" placeholder="Search documents..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Words</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Style</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="documents-table-body">
+                  <!-- Sample Document 1 -->
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Marketing Campaign Proposal</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">May 12, 2025</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">843</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        Professional
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-blue-600 hover:text-blue-900 mr-3">
+                        <i class="far fa-edit"></i>
+                      </button>
+                      <button class="text-red-600 hover:text-red-900">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  <!-- Sample Document 2 -->
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Research Paper Draft</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">May 8, 2025</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">1,204</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                        Academic
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-blue-600 hover:text-blue-900 mr-3">
+                        <i class="far fa-edit"></i>
+                      </button>
+                      <button class="text-red-600 hover:text-red-900">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  <!-- Sample Document 3 -->
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Blog Post - AI Trends</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">May 5, 2025</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">500</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        Creative
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-blue-600 hover:text-blue-900 mr-3">
+                        <i class="far fa-edit"></i>
+                      </button>
+                      <button class="text-red-600 hover:text-red-900">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-4 flex items-center justify-between">
+              <div class="text-sm text-gray-700">
+                Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">3</span> results
+              </div>
+              <div class="flex-1 flex justify-end">
+                <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled>
+                  Previous
+                </button>
+                <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled>
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script id="app-script">
+document.addEventListener('DOMContentLoaded', function() {
+  const $ = id => document.getElementById(id);
+
+  // ---------- Humanizer ----------
+  function humanizeText(text) {
+    const synonyms = {
+      "important": "crucial",
+      "big": "significant",
+      "small": "minor",
+      "ai": "artificial intelligence",
+      "use": "utilize",
+      "show": "demonstrate",
+      "good": "beneficial",
+      "bad": "unfavorable",
+      "fast": "rapid",
+      "slow": "gradual",
+      "make": "create",
+      "help": "assist",
+      "need": "require",
+      "improve": "enhance",
+      "easy": "straightforward",
+      "hard": "challenging",
+      "start": "begin",
+      "end": "conclude"
+    };
+
+    let newText = text.split(/\b/).map(word => {
+      const lower = word.toLowerCase();
+      return synonyms[lower] ? synonyms[lower] : word;
+    }).join("");
+
+    let sentences = newText.split(/([.!?])/).reduce((acc, val, i, arr) => {
+      if (i % 2 === 0) acc.push(val + (arr[i + 1] || ""));
+      return acc;
+    }, []).filter(s => s.trim());
+
+    if (sentences.length > 2) {
+      let first = sentences.shift();
+      let last = sentences.pop();
+      sentences = [first, ...sentences.sort(() => Math.random() - 0.5), last];
+    }
+
+    newText = sentences.map((s, i) => {
+      if (i === 0) return s.trim();
+      if (s.length > 60) return "Moreover, " + s.trim();
+      if (s.length < 40) return "In addition, " + s.trim();
+      return s.trim();
+    }).join(" ");
+
+    return newText;
+  }
+
+  // ---------- Mobile menu ----------
+  const mobileMenuButton = $('mobile-menu-button');
+  const mobileMenu = $('mobile-menu');
+  mobileMenuButton?.addEventListener('click', () => mobileMenu?.classList.toggle('hidden'));
+
+  // ---------- Pages ----------
+  const pages = {
+    homepage: $('homepage'),
+    aboutPage: $('about-page'),
+    faqPage: $('faq-page'),
+    contactPage: $('contact-page'),
+    toolInterface: $('tool-interface'),
+    dashboard: $('dashboard')
+  };
+
+  function showPage(pageName) {
+    for (const key in pages) pages[key]?.classList.add('hidden');
+    pages[pageName]?.classList.remove('hidden');
+
+    if (pageName === 'dashboard') populateDocumentsTable();
+    if (pageName === 'toolInterface') initializeQuillEditors();
+  }
+
+  // ---------- Page navigation ----------
+  $('about-link')?.addEventListener('click', () => showPage('aboutPage'));
+  $('mobile-about-link')?.addEventListener('click', () => { showPage('aboutPage'); mobileMenu?.classList.add('hidden'); });
+  $('back-to-home-from-about')?.addEventListener('click', () => showPage('homepage'));
+
+  $('faq-link')?.addEventListener('click', () => showPage('faqPage'));
+  $('mobile-faq-link')?.addEventListener('click', () => { showPage('faqPage'); mobileMenu?.classList.add('hidden'); });
+  $('back-to-home-from-faq')?.addEventListener('click', () => showPage('homepage'));
+
+  $('contact-link')?.addEventListener('click', () => showPage('contactPage'));
+  $('mobile-contact-link')?.addEventListener('click', () => { showPage('contactPage'); mobileMenu?.classList.add('hidden'); });
+  $('back-to-home-from-contact')?.addEventListener('click', () => showPage('homepage'));
+
+  // ---------- Contact form ----------
+  const contactForm = $('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Thank you!',
+        text: 'Your message has been received. We will get back to you soon.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3b82f6'
+      });
+      contactForm.reset();
+    });
+  }
+
+  // ---------- Auth modal ----------
+  const authModal = $('auth-modal');
+  const loginButton = $('login-button');
+  const signupButton = $('signup-button');
+  const mobileLoginButton = $('mobile-login-button');
+  const mobileSignupButton = $('mobile-signup-button');
+  const closeAuthModal = $('close-auth-modal');
+  const loginTab = $('login-tab');
+  const signupTab = $('signup-tab');
+  const loginForm = $('login-form');
+  const signupForm = $('signup-form');
+
+  function openAuthModal(isLogin = true) {
+    authModal?.classList.remove('hidden');
+    if (isLogin) loginTab?.click(); else signupTab?.click();
+  }
+  function closeModal() { authModal?.classList.add('hidden'); }
+
+  loginButton?.addEventListener('click', () => openAuthModal(true));
+  signupButton?.addEventListener('click', () => openAuthModal(false));
+  mobileLoginButton?.addEventListener('click', () => { openAuthModal(true); mobileMenu?.classList.add('hidden'); });
+  mobileSignupButton?.addEventListener('click', () => { openAuthModal(false); mobileMenu?.classList.add('hidden'); });
+  closeAuthModal?.addEventListener('click', closeModal);
+
+  loginTab?.addEventListener('click', () => {
+    loginTab.classList.add('border-blue-500','text-blue-600');
+    loginForm?.classList.remove('hidden');
+    signupForm?.classList.add('hidden');
+  });
+
+  signupTab?.addEventListener('click', () => {
+    signupTab.classList.add('border-blue-500','text-blue-600');
+    signupForm?.classList.remove('hidden');
+    loginForm?.classList.add('hidden');
+  });
+
+  // ---------- Login (API) ----------
+  $('login-submit')?.addEventListener('click', async function() {
+    const email = $('login-email')?.value;
+    const password = $('login-password')?.value;
+    if (!email || !password) {
+      Swal.fire({ title: 'Error', text: 'Please enter both email and password.', icon: 'error' });
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        closeModal();
+        showPage('toolInterface');
+        Swal.fire({ title: 'Logged In!', text: 'You have successfully logged in.', icon: 'success' });
+      } else {
+        Swal.fire({ title: 'Error', text: data.message || 'Login failed', icon: 'error' });
+      }
+    } catch (err) {
+      Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
+    }
+  });
+
+
+
+  // ---------- Signup (API) ----------
+  $('signup-submit')?.addEventListener('click', async function() {
+    const name = $('signup-name')?.value;
+    const email = $('signup-email')?.value;
+    const password = $('signup-password')?.value;
+    const confirmPassword = $('signup-confirm-password')?.value;
+    if (!name || !email || !password || !confirmPassword) {
+      Swal.fire({ title: 'Error', text: 'Please fill out all fields.', icon: 'error' });
+      return;
+    }
+    if (password !== confirmPassword) {
+      Swal.fire({ title: 'Error', text: 'Passwords do not match.', icon: 'error' });
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        closeModal();
+        showPage('toolInterface');
+        Swal.fire({ title: 'Account Created!', text: 'Your account has been successfully created.', icon: 'success' });
+      } else {
+        Swal.fire({ title: 'Error', text: data.message || 'Signup failed', icon: 'error' });
+      }
+    } catch (err) {
+      Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
+    }
+  });
+
+// ---------- Forgot Password Logic ----------
+
+// Show Forgot Password modal
+document.getElementById("forgot-password-link").addEventListener("click", () => {
+  document.getElementById("auth-modal").classList.add("hidden");
+  document.getElementById("forgotModal").classList.remove("hidden");
+});
+
+
+// Close Forgot Password modal
+document.getElementById("close-forgot-modal").addEventListener("click", () => {
+  document.getElementById("forgotModal").classList.add("hidden");
+});
+
+// Send Reset Link
+document.getElementById("forgot-submit").addEventListener("click", async () => {
+  const email = document.getElementById("forgot-email").value.trim();
+
+  if (!email) return alert("Please enter your email.");
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    alert(data.message || "Reset link sent to your email!");
+  } catch (err) {
+    alert("Error sending reset link. Please try again.");
+    console.error(err);
+  }
+});
+
+// ---------- Reset Password Logic ----------
+
+// Show Reset Password modal (you can open it manually after receiving token)
+function openResetModal() {
+  document.getElementById("forgotModal").classList.add("hidden");
+  document.getElementById("resetModal").classList.remove("hidden");
+}
+
+// Close Reset Password modal
+document.getElementById("close-reset-modal").addEventListener("click", () => {
+  document.getElementById("resetModal").classList.add("hidden");
+});
+
+// Reset Password
+document.getElementById("reset-submit").addEventListener("click", async () => {
+  const token = document.getElementById("reset-token").value.trim();
+  const newPassword = document.getElementById("reset-password").value.trim();
+
+  if (!token || !newPassword) return alert("Please fill in all fields.");
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword })
+    });
+    const data = await res.json();
+
+    alert(data.message || "Password reset successful!");
+    if (res.ok) {
+      document.getElementById("resetModal").classList.add("hidden");
+      document.getElementById("auth-modal").classList.remove("hidden");
+    }
+  } catch (err) {
+    alert("Error resetting password. Try again.");
+    console.error(err);
+  }
+});
+
+  // ---------- Quill ----------
+  const toolbarOptions = [
+    ['bold','italic','underline','strike'],
+    ['blockquote','code-block'],
+    [{ 'header': 1 }, { 'header': 2 }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    [{ 'header': [1,2,3,4,5,6,false] }],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'font': [] }],
+    [{ 'align': [] }],
+    ['clean']
+  ];
+  let quillInput = null, quillOutput = null;
+  function initializeQuillEditors() {
+    if ($('editor-container-input') && !quillInput) {
+      quillInput = new Quill('#editor-container-input', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+    }
+    if ($('editor-container-output') && !quillOutput) {
+      quillOutput = new Quill('#editor-container-output', { theme: 'snow', modules: { toolbar: toolbarOptions }, readOnly: true });
+    }
+  }
+
+  const toolInterfaceEl = $('tool-interface');
+  if (toolInterfaceEl) {
+    const toolPageObserver = new MutationObserver(() => {
+      if (!toolInterfaceEl.classList.contains('hidden')) initializeQuillEditors();
+    });
+    toolPageObserver.observe(toolInterfaceEl, { attributes: true });
+  }
+
+  // ---------- Report toggle ----------
+  $('report-toggle')?.addEventListener('click', () => {
+    $('reportPanel')?.classList.toggle('expanded');
+    $('report-toggle-icon')?.classList.toggle('fa-chevron-down');
+    $('report-toggle-icon')?.classList.toggle('fa-chevron-up');
+  });
+
+  // ---------- Humanize ----------
+  $('humanize-button')?.addEventListener('click', function() {
+    if (!quillInput) { Swal.fire({ title: 'Error', text: 'Editor not ready.', icon: 'error' }); return; }
+    const plainText = quillInput.getText().trim();
+    if (!plainText) {
+      Swal.fire({ title: 'Error', text: 'Please enter some content to humanize.', icon: 'error' });
+      return;
+    }
+
+    quillOutput.root.innerHTML = '<div class="flex justify-center items-center h-full"><div class="text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div><p class="text-gray-600">Humanizing your content...</p></div></div>';
+
+    setTimeout(() => {
+      const selectedStyle = $('style-select')?.value || 'professional';
+      const transformedText = humanizeText(plainText) + `\n\n[Humanized — style: ${selectedStyle}]`;
+      quillOutput.setText(transformedText);
+
+      const words = transformedText.split(/\s+/).filter(Boolean).length;
+      $('word-count').textContent = `${words} words`;
+      $('detailed-word-count').textContent = words;
+      $('character-count').textContent = transformedText.length;
+      $('reading-time').textContent = `${Math.max(1, Math.ceil(words / 200))} min`;
+
+      const originality = Math.floor(Math.random() * 21) + 80;
+      const humanScore = Math.floor(Math.random() * 21) + 80;
+      const readability = Math.floor(Math.random() * 41) + 60;
+
+      $('originality-score').textContent = originality + '%';
+      $('originality-bar').style.width = originality + '%';
+      $('human-score').textContent = humanScore + '%';
+      $('human-bar').style.width = humanScore + '%';
+      $('readability-score').textContent = readability;
+      $('readability-bar').style.width = readability + '%';
+
+      const suggestions = [
+        'Simplify long sentences for clarity.',
+        'Use varied sentence structures.',
+        "Avoid repetitive words like 'very' and 'really'."
+      ];
+      $('suggestions-container').innerHTML = `<ul class="space-y-2 text-sm">${suggestions.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+
+      $('reportPanel')?.classList.add('expanded');
+      $('report-toggle-icon')?.classList.remove('fa-chevron-down');
+      $('report-toggle-icon')?.classList.add('fa-chevron-up');
+
+      Swal.fire({ title: 'Content Humanized!', text: 'Your content has been successfully transformed.', icon: 'success' });
+    }, 1400);
+  });
+
+  // ---------- Clear / Copy / Download ----------
+  $('clear-input')?.addEventListener('click', () => quillInput?.setText(''));
+
+  $('copy-output')?.addEventListener('click', async () => {
+    if (!quillOutput) return;
+    const text = quillOutput.getText();
+    try {
+      await navigator.clipboard.writeText(text);
+      Swal.fire({ title: 'Copied!', text: 'Content copied to clipboard', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+    } catch (err) {
+      Swal.fire({ title: 'Error', text: 'Unable to copy', icon: 'error' });
+    }
+  });
+
+  $('download-output')?.addEventListener('click', () => {
+    if (!quillOutput) return;
+    const text = quillOutput.getText();
+    if (!text.trim()) { Swal.fire({ title:'Error', text:'No content to download.', icon:'error' }); return; }
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'humanized-content.txt'; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  });
+
+  // ---------- Save & Dashboard ----------
+  function populateDocumentsTable() {
+    const tbody = $('documents-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+    docs.forEach(doc => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${doc.title}</div></td>
+        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${doc.date}</div></td>
+        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${doc.words}</div></td>
+        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">${doc.style}</span></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm">
+          <button class="text-blue-600 hover:text-blue-900 mr-3" data-action="edit" data-id="${doc.id}"><i class="far fa-edit"></i></button>
+          <button class="text-red-600 hover:text-red-900" data-action="delete" data-id="${doc.id}"><i class="far fa-trash-alt"></i></button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  const docsBody = $('documents-table-body');
+  docsBody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = parseInt(btn.dataset.id, 10);
+    if (action === 'delete') {
+      let docs = JSON.parse(localStorage.getItem('documents') || '[]');
+      docs = docs.filter(d => d.id !== id);
+      localStorage.setItem('documents', JSON.stringify(docs));
+      populateDocumentsTable();
+      Swal.fire({ title:'Deleted', text:'Document removed.', icon:'success' });
+    } else if (action === 'edit') {
+      const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+      const doc = docs.find(d => d.id === id);
+      if (!doc) return;
+      showPage('toolInterface');
+      initializeQuillEditors();
+      setTimeout(() => {
+        quillInput?.setText(doc.text || '');
+        quillOutput?.setText('');
+      }, 200);
+    }
+  });
+
+  $('save-document')?.addEventListener('click', () => {
+    if (!quillOutput) { Swal.fire({ title:'Error', text:'No content to save.', icon:'error' }); return; }
+    const text = quillOutput.getText().trim();
+    if (!text) { Swal.fire({ title:'Error', text:'No content to save. Humanize first.', icon:'error' }); return; }
+    const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+    const selectedStyle = $('style-select')?.value || 'Professional';
+    const words = text.split(/\s+/).filter(Boolean).length;
+    const doc = { id: Date.now(), title: `Doc ${docs.length + 1}`, date: new Date().toLocaleDateString(), text, style: selectedStyle, words };
+    docs.push(doc);
+    localStorage.setItem('documents', JSON.stringify(docs));
+    populateDocumentsTable();
+    Swal.fire({ title:'Saved!', text:'Document stored successfully.', icon:'success' });
+  });
+
+// ---------- Forgot Password ----------
+$('forgot-link')?.addEventListener('click', () => showModal('forgotModal'));
+
+$('forgot-submit')?.addEventListener('click', async () => {
+  const email = $('forgot-email').value;
+  if (!email) {
+    Swal.fire({ title: 'Error', text: 'Please enter your email.', icon: 'error' });
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:5000/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      Swal.fire({
+        title: 'Email Sent!',
+        text: 'If that email exists, a reset link has been sent.',
+        icon: 'success'
+      });
+      closeModal();
+    } else {
+      Swal.fire({ title: 'Error', text: data.message, icon: 'error' });
+    }
+  } catch {
+    Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
+  }
+});
+
+
+  // ---------- Dashboard navigation ----------
+  $('dashboard-button')?.addEventListener('click', () => showPage('dashboard'));
+  $('mobile-dashboard-button')?.addEventListener('click', () => { showPage('dashboard'); mobileMenu?.classList.add('hidden'); });
+  $('back-to-tool')?.addEventListener('click', () => showPage('toolInterface'));
+
+  // Show homepage by default
+  showPage('homepage');
+});
+</script>
+</body>
+</html>
