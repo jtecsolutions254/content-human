@@ -98,6 +98,88 @@
     #reportPanel.expanded {
       max-height: 1000px;
     }
+
+/* Modal background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; 
+  z-index: 999; /* On top */
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); /* Black with opacity */
+  backdrop-filter: blur(2px);
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto; /* Center vertically & horizontally */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Slide down animation */
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Close button */
+.close-btn {
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* OK button */
+#okBtn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+}
+
+#okBtn:hover {
+  background-color: #0056b3;
+}
+.countdown {
+  position: fixed;       /* Make it float */
+  bottom: 20px;             /* Distance from top */
+  left: 20px;           /* Distance from right */
+  background: rgba(39, 2, 252, 0.9); /* Semi-transparent background */
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  text-align: center;
+  font-family: Arial, sans-serif;
+  z-index: 9999;         /* Make sure it stays on top of everything */
+}
+
+.countdown h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: chartreuse;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  color: aquamarine;
+  font-family: 'Times New Roman', Times, serif;
+}
+
   </style>
 </head>
 <body>
@@ -145,6 +227,18 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="lg:flex lg:items-center lg:space-x-12">
             <div class="lg:w-1/2">
+
+<div id="countdown" class="countdown">
+  <h2>Site Launching In:</h2>
+  <div class="timer">
+    <span id="days">00</span>d :
+    <span id="hours">00</span>h :
+    <span id="minutes">00</span>m :
+    <span id="seconds">00</span>s
+  </div>
+</div>
+
+
               <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
                 <span>Humanize Your </span>
                 <span>AI Content</span>
@@ -542,7 +636,7 @@
             <div>
               <h2 class="text-2xl font-semibold mb-4">Get in Touch</h2>
               <p class="text-gray-600 mb-6">
-                Have questions about ContentHuman? We're here to help. Fill out the form and our team will get back to you as soon as possible.
+                Have questions about ContentHumanPRO? We're here to help. Fill out the form and our team will get back to you as soon as possible.
               </p>
               
               <div class="space-y-4 mb-6">
@@ -560,7 +654,7 @@
                     <i class="fas fa-phone"></i>
                   </div>
                   <div class="ml-3 text-gray-600">
-                    <p>+1 (555) 123-4567</p>
+                    <p>+254114234020<br>+254783512434</p>
                   </div>
                 </div>
                 
@@ -569,7 +663,7 @@
                     <i class="fas fa-map-marker-alt"></i>
                   </div>
                   <div class="ml-3 text-gray-600">
-                    <p>1234 Innovation Drive<br>San Francisco, CA 94103</p>
+                    <p>Embu Town, G-Town <br>Embu,Kenya</p>
                   </div>
                 </div>
               </div>
@@ -588,34 +682,39 @@
             </div>
             
             <div>
-              <form id="contact-form">
-                <div class="mb-4">
-                  <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                
-                <div class="mb-4">
-                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                  <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                
-                <div class="mb-4">
-                  <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                  <input type="text" id="subject" name="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                
-                <div class="mb-6">
-                  <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                  <textarea id="message" name="message" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                </div>
-                
-                <button type="submit" class="w-full px-6 py-3 text-white font-medium rounded-md gradient-bg hover:opacity-90">
-                  Send Message
-                </button>
-              </form>
-            </div>
+  <form id="contact-form">
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+      <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    
+    <div class="mb-4">
+      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+      <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    
+    <div class="mb-4">
+      <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+      <input type="text" id="subject" name="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    
+    <div class="mb-6">
+      <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+      <textarea id="message" name="message" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+    </div>
+    
+    <button type="submit" class="w-full px-6 py-3 text-white font-medium rounded-md gradient-bg hover:opacity-90">
+      Send Message
+    </button>
+  </form>
+</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  
+        
         <div class="text-center mt-8">
           <button id="back-to-home-from-contact" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
             Back to Home
@@ -1156,59 +1255,99 @@
     </div>
   </div>
 
+<!-- Disclaimer Modal -->
+<div id="disclaimerModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>⚠️ Disclaimer</h2>
+    <p>
+  ⚠️ <strong>Note:</strong> This app is still under development. You are encouraged to double-check your grammar after humanizing your content.
+  <br><br>
+  If your content is not fully humanized, try using 
+  <a href="https://www.humanizeai.pro/" target="_blank" class="text-blue-600 underline hover:text-blue-800">
+    Humanize AI
+  </a> 
+  while we finalize the integration of our APIs into <strong>ContentHumanizerPRO</strong>.
+</p>
+
+    <button id="okBtn">OK</button>
+  </div>
+</div>
+
+
 
 <script id="app-script">
 document.addEventListener('DOMContentLoaded', function() {
   const $ = id => document.getElementById(id);
 
-  // ---------- Humanizer ----------
-  function humanizeText(text) {
-    const synonyms = {
-      "important": "crucial",
-      "big": "significant",
-      "small": "minor",
-      "ai": "artificial intelligence",
-      "use": "utilize",
-      "show": "demonstrate",
-      "good": "beneficial",
-      "bad": "unfavorable",
-      "fast": "rapid",
-      "slow": "gradual",
-      "make": "create",
-      "help": "assist",
-      "need": "require",
-      "improve": "enhance",
-      "easy": "straightforward",
-      "hard": "challenging",
-      "start": "begin",
-      "end": "conclude"
-    };
+  function humanizeText(text, tone = "creative") {
+  const synonyms = {
+    "important": "crucial",
+    "big": "significant",
+    "small": "minor",
+    "ai": "artificial intelligence",
+    "use": "utilize",
+    "show": "demonstrate",
+    "good": "beneficial",
+    "bad": "unfavorable",
+    "fast": "rapid",
+    "slow": "gradual",
+    "make": "create",
+    "help": "assist",
+    "need": "require",
+    "improve": "enhance",
+    "easy": "straightforward",
+    "hard": "challenging",
+    "start": "begin",
+    "end": "conclude"
+  };
 
-    let newText = text.split(/\b/).map(word => {
-      const lower = word.toLowerCase();
-      return synonyms[lower] ? synonyms[lower] : word;
-    }).join("");
+  // Step 1: Avoid splitting abbreviations like Dr., Mr., Md., etc.
+  text = text.replace(/\b(Md|Dr|Mr|Mrs|Ms|Prof)\./g, "$1#");
 
-    let sentences = newText.split(/([.!?])/).reduce((acc, val, i, arr) => {
-      if (i % 2 === 0) acc.push(val + (arr[i + 1] || ""));
-      return acc;
-    }, []).filter(s => s.trim());
+  // Step 2: Replace synonyms
+  let newText = text.split(/\b/).map(word => {
+    const lower = word.toLowerCase();
+    return synonyms[lower] ? synonyms[lower] : word;
+  }).join("");
 
-    if (sentences.length > 2) {
-      let first = sentences.shift();
-      let last = sentences.pop();
-      sentences = [first, ...sentences.sort(() => Math.random() - 0.5), last];
-    }
+  // Step 3: Split into sentences
+  let sentences = newText.split(/([.!?])/).reduce((acc, val, i, arr) => {
+    if (i % 2 === 0) acc.push(val + (arr[i + 1] || ""));
+    return acc;
+  }, []).filter(s => s.trim());
 
+  // Restore abbreviations
+  sentences = sentences.map(s => s.replace(/#/g, "."));
+
+  // --- PROFESSIONAL STYLE ---
+  if (tone === "professional") {
     newText = sentences.map((s, i) => {
       if (i === 0) return s.trim();
-      if (s.length > 60) return "Moreover, " + s.trim();
-      if (s.length < 40) return "In addition, " + s.trim();
+      if (s.length > 100) return "Furthermore, " + s.trim();
+      if (s.length > 50) return "Additionally, " + s.trim();
       return s.trim();
     }).join(" ");
-
-    return newText;
+    return newText + " [Humanized — style: professional]";
   }
+
+  // --- CREATIVE STYLE ---
+  if (sentences.length > 2) {
+    const first = sentences.shift();
+    const last = sentences.pop();
+    sentences = [first, ...sentences.sort(() => Math.random() - 0.5), last];
+  }
+
+  const transitions = ["Moreover,", "Interestingly,", "Notably,", "As a result,", "Consequently,"];
+  newText = sentences.map((s, i) => {
+    if (i === 0) return s.trim();
+    const randomTransition = transitions[Math.floor(Math.random() * transitions.length)];
+    return randomTransition + " " + s.trim();
+  }).join(" ");
+
+  return newText + " [Humanized — style: creative]";
+}
+
 
   // ---------- Mobile menu ----------
   const mobileMenuButton = $('mobile-menu-button');
@@ -1298,69 +1437,94 @@ document.addEventListener('DOMContentLoaded', function() {
     loginForm?.classList.add('hidden');
   });
 
-  // ---------- Login (API) ----------
-  $('login-submit')?.addEventListener('click', async function() {
+  // ---------- Modal Elements ----------
+const modal = document.getElementById("disclaimerModal");
+const closeBtn = document.querySelector(".close-btn");
+const okBtn = document.getElementById("okBtn");
+
+// Function to show modal
+function showDisclaimerModal() {
+    modal.style.display = "block";
+}
+
+// Close modal on clicking X or OK button
+closeBtn.onclick = () => modal.style.display = "none";
+okBtn.onclick = () => modal.style.display = "none";
+
+// Close modal if user clicks outside the modal content
+window.onclick = (event) => {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
+
+// ---------- Login (API) ----------
+$('login-submit')?.addEventListener('click', async function() {
     const email = $('login-email')?.value;
     const password = $('login-password')?.value;
     if (!email || !password) {
-      Swal.fire({ title: 'Error', text: 'Please enter both email and password.', icon: 'error' });
-      return;
+        Swal.fire({ title: 'Error', text: 'Please enter both email and password.', icon: 'error' });
+        return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        closeModal();
-        showPage('toolInterface');
-        Swal.fire({ title: 'Logged In!', text: 'You have successfully logged in.', icon: 'success' });
-      } else {
-        Swal.fire({ title: 'Error', text: data.message || 'Login failed', icon: 'error' });
-      }
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem("token", data.token);
+            closeModal();
+            showPage('toolInterface');
+            Swal.fire({ title: 'Logged In!', text: 'You have successfully logged in.', icon: 'success' })
+                .then(() => {
+                    showDisclaimerModal(); // Show modal after successful login
+                });
+        } else {
+            Swal.fire({ title: 'Error', text: data.message || 'Login failed', icon: 'error' });
+        }
     } catch (err) {
-      Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
+        Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
     }
-  });
+});
 
-
-
-  // ---------- Signup (API) ----------
-  $('signup-submit')?.addEventListener('click', async function() {
+// ---------- Signup (API) ----------
+$('signup-submit')?.addEventListener('click', async function() {
     const name = $('signup-name')?.value;
     const email = $('signup-email')?.value;
     const password = $('signup-password')?.value;
     const confirmPassword = $('signup-confirm-password')?.value;
     if (!name || !email || !password || !confirmPassword) {
-      Swal.fire({ title: 'Error', text: 'Please fill out all fields.', icon: 'error' });
-      return;
+        Swal.fire({ title: 'Error', text: 'Please fill out all fields.', icon: 'error' });
+        return;
     }
     if (password !== confirmPassword) {
-      Swal.fire({ title: 'Error', text: 'Passwords do not match.', icon: 'error' });
-      return;
+        Swal.fire({ title: 'Error', text: 'Passwords do not match.', icon: 'error' });
+        return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        closeModal();
-        showPage('toolInterface');
-        Swal.fire({ title: 'Account Created!', text: 'Your account has been successfully created.', icon: 'success' });
-      } else {
-        Swal.fire({ title: 'Error', text: data.message || 'Signup failed', icon: 'error' });
-      }
+        const res = await fetch("http://localhost:5000/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem("token", data.token);
+            closeModal();
+            showPage('toolInterface');
+            Swal.fire({ title: 'Account Created!', text: 'Your account has been successfully created.', icon: 'success' })
+                .then(() => {
+                    showDisclaimerModal(); // Show modal after successful signup
+                });
+        } else {
+            Swal.fire({ title: 'Error', text: data.message || 'Signup failed', icon: 'error' });
+        }
     } catch (err) {
-      Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
+        Swal.fire({ title: 'Error', text: 'Server not responding.', icon: 'error' });
     }
-  });
+});
 
 // ---------- Forgot Password Logic ----------
 
@@ -1475,53 +1639,110 @@ document.getElementById("reset-submit").addEventListener("click", async () => {
     $('report-toggle-icon')?.classList.toggle('fa-chevron-up');
   });
 
-  // ---------- Humanize ----------
-  $('humanize-button')?.addEventListener('click', function() {
-    if (!quillInput) { Swal.fire({ title: 'Error', text: 'Editor not ready.', icon: 'error' }); return; }
-    const plainText = quillInput.getText().trim();
-    if (!plainText) {
-      Swal.fire({ title: 'Error', text: 'Please enter some content to humanize.', icon: 'error' });
-      return;
-    }
+// ---------- Humanize ----------
+$('humanize-button')?.addEventListener('click', function () {
+  if (!quillInput) {
+    Swal.fire({ title: 'Error', text: 'Editor not ready.', icon: 'error' });
+    return;
+  }
 
-    quillOutput.root.innerHTML = '<div class="flex justify-center items-center h-full"><div class="text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div><p class="text-gray-600">Humanizing your content...</p></div></div>';
+  const plainText = quillInput.getText().trim();
+  if (!plainText) {
+    Swal.fire({ title: 'Error', text: 'Please enter some content to humanize.', icon: 'error' });
+    return;
+  }
 
-    setTimeout(() => {
-      const selectedStyle = $('style-select')?.value || 'professional';
-      const transformedText = humanizeText(plainText) + `\n\n[Humanized — style: ${selectedStyle}]`;
-      quillOutput.setText(transformedText);
+  // Create a full overlay loader (outside Quill)
+  let loader = document.createElement('div');
+  loader.id = 'humanize-loader-overlay';
+  loader.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 9999;
+      flex-direction: column;
+      font-family: 'Poppins', sans-serif;
+    ">
+      <div style="
+        width: 80px;
+        height: 80px;
+        border: 6px dotted #2563eb;
+        border-radius: 50%;
+        animation: spinSlow 1.5s linear infinite;
+        margin-bottom: 20px;
+      "></div>
+      <div style="color: #1f2937; font-size: 16px; font-weight: 600; letter-spacing: 0.5px;">
+        Humanizing your content...
+      </div>
+    </div>
+  `;
+  document.body.appendChild(loader);
 
-      const words = transformedText.split(/\s+/).filter(Boolean).length;
-      $('word-count').textContent = `${words} words`;
-      $('detailed-word-count').textContent = words;
-      $('character-count').textContent = transformedText.length;
-      $('reading-time').textContent = `${Math.max(1, Math.ceil(words / 200))} min`;
+  // Add the animation if not already
+  if (!document.getElementById('custom-spinner-style')) {
+    const style = document.createElement('style');
+    style.id = 'custom-spinner-style';
+    style.innerHTML = `
+      @keyframes spinSlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
-      const originality = Math.floor(Math.random() * 21) + 80;
-      const humanScore = Math.floor(Math.random() * 21) + 80;
-      const readability = Math.floor(Math.random() * 41) + 60;
+  // Simulate humanizing delay (7 seconds)
+  setTimeout(() => {
+    // Remove loader
+    loader.remove();
 
-      $('originality-score').textContent = originality + '%';
-      $('originality-bar').style.width = originality + '%';
-      $('human-score').textContent = humanScore + '%';
-      $('human-bar').style.width = humanScore + '%';
-      $('readability-score').textContent = readability;
-      $('readability-bar').style.width = readability + '%';
+    const selectedStyle = $('style-select')?.value || 'professional';
+    const transformedText = humanizeText(plainText) + `\n\n[Humanized — style: ${selectedStyle}]`;
+    quillOutput.setText(transformedText);
 
-      const suggestions = [
-        'Simplify long sentences for clarity.',
-        'Use varied sentence structures.',
-        "Avoid repetitive words like 'very' and 'really'."
-      ];
-      $('suggestions-container').innerHTML = `<ul class="space-y-2 text-sm">${suggestions.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+    const words = transformedText.split(/\s+/).filter(Boolean).length;
+    $('word-count').textContent = `${words} words`;
+    $('detailed-word-count').textContent = words;
+    $('character-count').textContent = transformedText.length;
+    $('reading-time').textContent = `${Math.max(1, Math.ceil(words / 200))} min`;
 
-      $('reportPanel')?.classList.add('expanded');
-      $('report-toggle-icon')?.classList.remove('fa-chevron-down');
-      $('report-toggle-icon')?.classList.add('fa-chevron-up');
+    const originality = Math.floor(Math.random() * 21) + 80;
+    const humanScore = Math.floor(Math.random() * 21) + 80;
+    const readability = Math.floor(Math.random() * 41) + 60;
 
-      Swal.fire({ title: 'Content Humanized!', text: 'Your content has been successfully transformed.', icon: 'success' });
-    }, 1400);
-  });
+    $('originality-score').textContent = originality + '%';
+    $('originality-bar').style.width = originality + '%';
+    $('human-score').textContent = humanScore + '%';
+    $('human-bar').style.width = humanScore + '%';
+    $('readability-score').textContent = readability;
+    $('readability-bar').style.width = readability + '%';
+
+    const suggestions = [
+      'Simplify long sentences for clarity.',
+      'Use varied sentence structures.',
+      "Avoid repetitive words like 'very' and 'really'."
+    ];
+    $('suggestions-container').innerHTML = `<ul class="space-y-2 text-sm">${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+
+    $('reportPanel')?.classList.add('expanded');
+    $('report-toggle-icon')?.classList.remove('fa-chevron-down');
+    $('report-toggle-icon')?.classList.add('fa-chevron-up');
+
+    Swal.fire({
+      title: 'Content Humanized!',
+      text: 'Your content has been successfully transformed.',
+      icon: 'success'
+    });
+  }, 7000);
+});
+
 
   // ---------- Clear / Copy / Download ----------
   $('clear-input')?.addEventListener('click', () => quillInput?.setText(''));
@@ -1649,6 +1870,73 @@ $('forgot-submit')?.addEventListener('click', async () => {
   // Show homepage by default
   showPage('homepage');
 });
+
+// Set your fixed launch date and time (Kenya time = UTC+3)
+const launchDate = new Date(2025, 9, 16, 15, 0, 0); // Oct = 9 (0-indexed month)
+
+// Update countdown every second
+const countdownInterval = setInterval(() => {
+  const now = new Date();
+  const diff = launchDate - now;
+
+  // If launch time has passed
+  if (diff <= 0) {
+    clearInterval(countdownInterval);
+
+    // Option 1: Replace text
+    document.getElementById('countdown').innerHTML = "<h2>We Are Live! 🚀</h2>";
+
+    // Option 2 (recommended): Hide the countdown completely
+    setTimeout(() => {
+      const countdownDiv = document.getElementById('countdown');
+      if (countdownDiv) countdownDiv.style.display = 'none';
+    }, 5000); // hides 3 seconds after showing "We Are Live!"
+    return;
+  }
+
+  // Otherwise, continue counting down
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  document.getElementById('days').textContent = String(days).padStart(2, '0');
+  document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+  document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+  document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+}, 1000);
+
+
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Get form values
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    if (!name || !email || !subject || !message) {
+        alert('Please fill out all fields before sending.');
+        return;
+    }
+
+    // WhatsApp number (include country code, no + or spaces)
+    const phone = '254783512434'; // For 0783512434 in Kenya
+
+    // Construct WhatsApp message
+    const text = `Hello, I am ${name} (${email}).\nSubject: ${subject}\nMessage: ${message}`;
+
+    // Encode the message for URL
+    const encodedText = encodeURIComponent(text);
+
+    // Open WhatsApp link in a new tab
+    const whatsappURL = `https://wa.me/${phone}?text=${encodedText}`;
+    window.open(whatsappURL, '_blank');
+});
+
+
 </script>
+
 </body>
 </html>
